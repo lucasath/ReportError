@@ -30,29 +30,55 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // src/index.ts
 var src_exports = {};
 __export(src_exports, {
+  ErrorReport: () => ErrorReport_default,
   useErrorLogger: () => useErrorLogger
 });
 module.exports = __toCommonJS(src_exports);
-
-// src/hooks/useErrorLogger.ts
-var import_react2 = require("react");
 
 // src/components/ErrorReport/Provider/index.tsx
 var import_react = require("react");
 var import_jsx_runtime = require("react/jsx-runtime");
 var ErrorContext = (0, import_react.createContext)(void 0);
-
-// src/hooks/useErrorLogger.ts
-var useErrorLogger = () => {
-  const context = (0, import_react2.useContext)(ErrorContext);
-  if (!context)
-    throw new Error("useErrorLogger deve estar dentro de ErrorProvider");
-  return context.reportError;
+var ErrorProvider = ({ children, endpoint, cb }) => {
+  const reportError = (0, import_react.useCallback)(async (error) => {
+    try {
+      if (cb) {
+        cb(error);
+      } else {
+        await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: error.message,
+            stack: error.stack,
+            timestamp: (/* @__PURE__ */ new Date()).toISOString()
+          })
+        });
+      }
+    } catch (err) {
+      console.error("[ErrorProvider] Falha ao reportar erro:", err);
+    }
+  }, [endpoint, cb]);
+  (0, import_react.useEffect)(() => {
+    const handleError = (event) => {
+      reportError(event.error || new Error(event.message));
+    };
+    const handleRejection = (event) => {
+      reportError(event.reason instanceof Error ? event.reason : new Error(String(event.reason)));
+    };
+    window.addEventListener("error", handleError);
+    window.addEventListener("unhandledrejection", handleRejection);
+    return () => {
+      window.removeEventListener("error", handleError);
+      window.removeEventListener("unhandledrejection", handleRejection);
+    };
+  }, [reportError]);
+  return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ErrorContext.Provider, { value: { reportError }, children });
 };
 
 // src/components/ErrorReport/Boundary/index.tsx
-var import_react3 = __toESM(require("react"));
-var ErrorBoundary = class extends import_react3.default.Component {
+var import_react2 = __toESM(require("react"));
+var ErrorBoundary = class extends import_react2.default.Component {
   static contextType = ErrorContext;
   state = {
     hasError: false
@@ -72,9 +98,23 @@ var ErrorBoundary = class extends import_react3.default.Component {
   }
 };
 
+// src/hooks/useErrorLogger.ts
+var import_react3 = require("react");
+var useErrorLogger = () => {
+  const context = (0, import_react3.useContext)(ErrorContext);
+  if (!context)
+    throw new Error("useErrorLogger deve estar dentro de ErrorProvider");
+  return context.reportError;
+};
+
 // src/components/ErrorReport/index.tsx
 var import_jsx_runtime2 = require("react/jsx-runtime");
+var ErrorReport = ({ endpoint, children, cb }) => {
+  return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(ErrorProvider, { endpoint, cb, children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(ErrorBoundary, { children }) });
+};
+var ErrorReport_default = ErrorReport;
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
+  ErrorReport,
   useErrorLogger
 });
