@@ -1,2 +1,4 @@
+import ErrorReport from '@/components/ErrorReport';
+
 export * from '@/hooks/useErrorLogger';
-export * from '@/components/ErrorReport';
+export { ErrorReport };
