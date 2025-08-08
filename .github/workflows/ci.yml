@@ -18,9 +18,9 @@ jobs:
         with:
           node-version: "20" # Or your preferred Node.js version
       - name: Install dependencies
-        run: npm ci
+        run: yarn ci
       - name: Run tests and collect coverage
-        run: npm test -- --coverage # Assuming "npm test" runs Jest
+        run: yarn test -- --coverage # Assuming "npm test" runs Jest
       - name: Upload coverage to Codecov (Optional)
         uses: codecov/codecov-action@v4
         with:
