@@ -7,11 +7,11 @@ export interface ErrorContextType {
 
 export const ErrorContext = createContext<ErrorContextType | undefined>(undefined);
 
-export const ErrorProvider: React.FC<{ children: React.ReactNode; endpoint: string; cb?: VoidFunction }> = ({ children, endpoint, cb }) => {
+export const ErrorProvider: React.FC<{ children: React.ReactNode; endpoint: string; cb?: (error: Error) => VoidFunction }> = ({ children, endpoint, cb }) => {
     const reportError = useCallback(async (error: Error) => {
         try {
             if (cb) {
-                cb();
+                cb(error);
             } else {
                 await fetch(endpoint, {
                     method: 'POST',
