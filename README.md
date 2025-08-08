@@ -30,10 +30,7 @@ yarn add errorreport
 
 ## Basic Usage
 
-Use the `ErrorReport` component to wrap your app. You can provide either:
-
-- An `endpoint` URL where errors will be sent automatically via POST request, **or**
-- An `onError` callback function to handle errors manually.
+Wrap your app with the `ErrorProvider`, providing the endpoint to which errors will be sent.
 
 ```tsx
 import { ErrorReport } from "errorreport";
@@ -47,22 +44,25 @@ export default function App() {
   );
 
   // Or using manual callback:
+  /*
   return (
-    <ErrorReport cb={(error: Error) => {
+    <ErrorReport cb={(error) => {
       // handle error, e.g. send to custom logging service
       console.log("Custom error handler:", error);
     }}>
       <YourApp />
     </ErrorReport>
   );
+  */
 }
+
 ```
 
 ---
 
 ## Components
 
-### `<ErrorProvider>`
+### `<ErrorReport>`
 
 Provider that captures global JavaScript errors and unhandled promise rejections, sending them to the configured endpoint.
 
@@ -71,21 +71,10 @@ Provider that captures global JavaScript errors and unhandled promise rejections
 | Name     | Type     | Description                         |
 |----------|----------|-----------------------------------|
 | endpoint | `string` | URL where the error reports are sent |
+| cb | `(error) => VoidFunction` | function callback to send to custom logging service |
 
 ---
 
-### `<ErrorBoundary>`
-
-Class component that catches render errors and calls `reportError` from context.
-
-**Props:**
-
-| Name     | Type             | Description                      |
-|----------|------------------|--------------------------------|
-| fallback | `React.ReactNode` | UI shown when an error occurs   |
-| children | `React.ReactNode` | Child components to render      |
-
----
 
 ## Hook
 
@@ -115,8 +104,7 @@ function Example() {
 
 ## Configuration
 
-- Wrap your entire app tree with `ErrorProvider` to capture global errors.  
-- Wrap components you want to monitor with `ErrorBoundary`.  
+- Wrap your entire app tree with `ErrorReport` to capture global errors.  
 - Captured errors are sent via `fetch` as a POST request with a JSON payload containing:  
   - `message`: error message  
   - `stack`: stack trace  
@@ -144,4 +132,4 @@ Please follow the coding style and test your changes before submitting.
 
 ## License
 
-MIT © Your Name
+MIT © Lucas
