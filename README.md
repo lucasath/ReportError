@@ -1,3 +1,4 @@
+[![codecov](https://codecov.io/github/lucasath/ReportError/graph/badge.svg?token=VO5HUTS3JZ)](https://codecov.io/github/lucasath/ReportError)
 
 # ErrorReport
 
