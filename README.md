@@ -30,18 +30,30 @@ yarn add errorreport
 
 ## Basic Usage
 
-Wrap your app with the `ErrorProvider`, providing the endpoint to which errors will be sent.
+Use the `ErrorReport` component to wrap your app. You can provide either:
+
+- An `endpoint` URL where errors will be sent automatically via POST request, **or**
+- An `onError` callback function to handle errors manually.
 
 ```tsx
-import { ErrorProvider, ErrorBoundary } from "errorreport";
+import { ErrorReport } from "errorreport";
 
 export default function App() {
+  // Using endpoint URL
   return (
-    <ErrorProvider endpoint="/api/error-report">
-      <ErrorBoundary fallback={<div>An unexpected error occurred.</div>}>
-        <YourApp />
-      </ErrorBoundary>
-    </ErrorProvider>
+    <ErrorReport endpoint="/api/error-report">
+      <YourApp />
+    </ErrorReport>
+  );
+
+  // Or using manual callback:
+  return (
+    <ErrorReport cb={(error: Error) => {
+      // handle error, e.g. send to custom logging service
+      console.log("Custom error handler:", error);
+    }}>
+      <YourApp />
+    </ErrorReport>
   );
 }
 ```
